@@ -1,7 +1,9 @@
 const { User, Ticket } = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { UserInputError } = require('apollo-server');
 const { SECRET_KEY } = require('../config')
+const { validateRegisterInput, validateLoginInput } = require('../utils/validators');
 
 function generateToken(user) {
     return jwt.sign(
@@ -23,8 +25,29 @@ const resolvers = {
     },
 
     Mutation: {
-        register: async(_, 
-            { registerInput: { first_name, last_name, email, username, password, confirmPassword }}) => {
+        register: async(_, { registerInput: { first_name, last_name, email, username, password, confirmPassword }}) => {
+            const { valid, errors } = validateRegisterInput(
+                first_name,
+                last_name,
+                email,
+                username,
+                password,
+                confirmPassword
+            );
+
+            if (!valid) {
+                throw new UserInputError('Errors', { errors })
+            }
+
+            const user = User.findOne({ username })
+            if (user) {
+                throw new UserInputError('Username is taken', {
+                    errors: {
+                        username: 'This username is taken'
+                    }
+                })
+            }
+            
             password = await bcrypt.hash(password, 12)
             
             const newUser = await User.create({
@@ -47,7 +70,18 @@ const resolvers = {
         },
 
         login: async(_, { username, password }) => {
+            const { valid, errors } = validateLoginInput(username, password);
+
+            if (!valid) {
+                throw new UserInputError('Errors', { errors })
+            }
+            
             const user = await User.findOne({ username })
+
+            if (!user) {
+                errors.general = 'User not found'
+                throw new UserInputError('User not found', { errors })
+            }
 
             const match = await bcrypt.compare(password, user.password)
             if (match) {
@@ -59,7 +93,7 @@ const resolvers = {
                     token
                 };
             } else {
-                console.log('Incorrect credentials!')
+                throw new UserInputError('Wrong credentials')
             }
         }
     }
