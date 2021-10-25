@@ -15,14 +15,16 @@ module.exports = gql`
 
     type Ticket {
         id: ID!
+        ticketNumber: Int!
         title: String!
         createdAt: String!
         category: String!
-        subCategory: String!
+        subCategory: String
         status: String!
         priority: String!
-        assignedTo: User
-        submitUser: User
+        assignedTo: String!
+        submitUser: String!
+        body: String!
     }
 
     type Query {
@@ -37,10 +39,21 @@ module.exports = gql`
         username: String!
         password: String!
         confirmPassword: String!
+        admin: Boolean
+    }
+
+    input TicketInput {
+        title: String!
+        category: String!
+        subCategory: String
+        priority: String!
+        submitUserId: ID!
+        body: String!
     }
 
     type Mutation {
         register(registerInput: RegisterInput): User
         login(username: String!, password: String!): User
+        createTicket(ticketInput: TicketInput): Ticket
     }
 `

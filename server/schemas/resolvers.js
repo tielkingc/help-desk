@@ -20,7 +20,8 @@ function generateToken(user) {
 const resolvers = {
     Query: {
         getUsers: async() => {
-            return User.find()
+            return await User.find()
+            // console.log(user.length);
         }
     },
 
@@ -39,7 +40,7 @@ const resolvers = {
                 throw new UserInputError('Errors', { errors })
             }
 
-            const user = User.findOne({ username })
+            const user = await User.findOne({ username })
             if (user) {
                 throw new UserInputError('Username is taken', {
                     errors: {
@@ -56,6 +57,7 @@ const resolvers = {
                 email,
                 username,
                 password,
+                admin: false,
                 createdAt: new Date().toISOString()});
 
             const res = await newUser.save();
@@ -95,6 +97,36 @@ const resolvers = {
             } else {
                 throw new UserInputError('Wrong credentials')
             }
+        },
+
+        createTicket: async(_, { ticketInput: { title, category, subCategory, priority, submitUserId, body }}) => {
+            const ticket = await Ticket.find()
+
+            if (!ticket) {
+                ticketLen = 1
+            } else {
+                ticketLen = ticket.length + 1
+            }
+
+            const assignedTo = await User.findById("6171e23bba2be827ea3d8c66")
+            
+            const submitUser = await User.findById(submitUserId)
+            console.log(submitUser.username)
+            
+            const newTicket = await Ticket.create({
+                title,
+                body,
+                ticketNumber: ticketLen,
+                category,
+                subCategory,
+                priority,
+                submitUser: submitUser.username,
+                createdAt: new Date().toISOString(),
+                status: 'New',
+                assignedTo: assignedTo.username
+            })
+
+            return newTicket
         }
     }
 }

@@ -1,21 +1,17 @@
 const { model, Schema } = require('mongoose');
 
 const ticketSchema = new Schema({
+    ticketNumber: Number,
     title: String,
     body: String,
     createdAt: String,
     category: String,
     subCategory: String,
-    assignedTo: {
-        type: Schema.Types.ObjectId,
-        ref: 'users'
-    },
+    assignedTo: String,
     status: String,
     priority: String,
-    submitUser: {
-        type: Schema.Types.ObjectId,
-        ref: 'users'
-    }
+    submitUser: String,
+    body: String
 })
 
 module.exports = model('Ticket', ticketSchema);
