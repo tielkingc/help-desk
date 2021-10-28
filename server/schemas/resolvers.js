@@ -22,6 +22,10 @@ const resolvers = {
         getUsers: async() => {
             return await User.find()
             // console.log(user.length);
+        },
+
+        getTickets: async() => {
+            return await Ticket.find();
         }
     },
 
@@ -107,8 +111,6 @@ const resolvers = {
             } else {
                 ticketLen = ticket.length + 1
             }
-
-            const assignedTo = await User.findById("6171e23bba2be827ea3d8c66")
             
             const submitUser = await User.findById(submitUserId)
             console.log(submitUser.username)
@@ -123,10 +125,20 @@ const resolvers = {
                 submitUser: submitUser.username,
                 createdAt: new Date().toISOString(),
                 status: 'New',
-                assignedTo: assignedTo.username
+                assignedTo: 'None'
             })
 
             return newTicket
+        },
+
+        assignToAdmin: async (_, { username, ticketNumber }) => {
+            const ticket = await Ticket.findOneAndUpdate(
+                { ticketNumber },
+                { assignedTo: username },
+                { new: true}
+            )
+
+            return ticket
         }
     }
 }

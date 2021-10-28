@@ -30,6 +30,7 @@ module.exports = gql`
     type Query {
         getUsers: [User]
         getUser(id:ID): User
+        getTickets: [Ticket]
     }
 
     input RegisterInput {
@@ -55,5 +56,6 @@ module.exports = gql`
         register(registerInput: RegisterInput): User
         login(username: String!, password: String!): User
         createTicket(ticketInput: TicketInput): Ticket
+        assignToAdmin(username: String!, ticketNumber: Int!): Ticket
     }
 `
