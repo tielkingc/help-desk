@@ -1,26 +1,28 @@
 import React from "react";
-import { Card, Icon, Label, Button, Image } from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import moment from 'moment';
 
-function TicketCard(ticket) {    
+function TicketCard({ticket: { title, createdAt, body}}) {    
     return (
-        <Card>
-            <Card.Content>
-                <Image
-                floated='right'
-                size='mini'
-                src='https://react.semantic-ui.com/images/avatar/large/molly.png'
-                />
-                <Card.Header>{ticket.title}</Card.Header>
-                <Card.Meta>{moment(ticket.createdAt).fromNow(true)}</Card.Meta>
-                <Card.Description>
-                {ticket.body}
-                </Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-                <p>buttons here</p>
-            </Card.Content> 
-        </Card>
+        <Table striped>
+            <Table.Header>
+            <Table.Row>
+                <Table.HeaderCell>Name</Table.HeaderCell>
+                <Table.HeaderCell>Date Joined</Table.HeaderCell>
+                <Table.HeaderCell>E-mail</Table.HeaderCell>
+                <Table.HeaderCell>Called</Table.HeaderCell>
+            </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+            <Table.Row>
+                <Table.Cell>John Lilki</Table.Cell>
+                <Table.Cell>September 14, 2013</Table.Cell>
+                <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
+                <Table.Cell>No</Table.Cell>
+            </Table.Row>
+            </Table.Body>
+        </Table>
     )
 }
 
